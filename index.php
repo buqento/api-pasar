@@ -11,6 +11,7 @@ $app->post('/signup','signup');
 $app->post('/postPesanan','postPesanan');
 $app->post('/updateProfil','updateProfil');
 $app->post('/deletePesanan','deletePesanan');
+$app->post('/addToPesanan','addToPesanan');
 
 //GET
 $app->get('/produks', 'getProduks');
@@ -20,6 +21,36 @@ $app->get('/getPesanans/:id','getPesanans');
 $app->get('/getTotalPesananById/:id','getTotalPesananById');
 
 $app->run();
+
+function addToPesanan(){
+    $request = \Slim\Slim::getInstance()->request();
+    $data = json_decode($request->getBody());
+
+    $penggunaId=$data->penggunaId;
+    $produkId=$data->produkId;
+    $jumlah=$data->jumlah;
+    $totalBayar=$data->totalBayar;
+    $status=$data->status;
+    $keterangan=$data->keterangan;
+
+    try {
+        $db = getDB();
+        $sql = "INSERT INTO pesanan (pengguna_id, produk_id, jumlah, total_bayar, status, keterangan) VALUES (:pengguna_id, :produk_id, :jumlah, :total_bayar, :status, :keterangan)";
+        $stmt = $db->prepare($sql);
+        $stmt->bindParam("pengguna_id", $penggunaId, PDO::PARAM_STR);
+        $stmt->bindParam("produk_id", $produkId, PDO::PARAM_STR);
+        $stmt->bindParam("jumlah", $jumlah, PDO::PARAM_STR);
+        $stmt->bindParam("total_bayar", $totalBayar, PDO::PARAM_STR);
+        $stmt->bindParam("status", $status, PDO::PARAM_STR);
+        $stmt->bindParam("keterangan", $keterangan, PDO::PARAM_STR);
+        $stmt->execute();
+        $db = null;
+        echo '{"success":{"text":"Berhasil"}}';
+    } catch(PDOException $e) {
+        echo '{"error":{"text":'. $e->getMessage() .'}}';
+    }
+    
+}
 
 function getProduks() {
 $sql = "SELECT * FROM produk";
@@ -209,8 +240,8 @@ function signup() {
     try {
         
         $username_check = preg_match('~^[A-Za-z0-9_]{3,20}$~i', $username);
-        $email_check = preg_match('~^[a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.([a-zA-Z]{2,4})$~i', $email);
         $password_check = preg_match('~^[A-Za-z0-9!@#$%^&*()_]{6,20}$~i', $password);
+        $email_check = preg_match('~^[a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.([a-zA-Z]{2,4})$~i', $email);
         
         if (strlen(trim($username))>0 && strlen(trim($password))>0 && strlen(trim($email))>0 && $email_check>0 && $username_check>0 && $password_check>0)
         {
@@ -250,13 +281,13 @@ function signup() {
                $userData = json_encode($userData);
                 echo '{"userData": ' .$userData . '}';
             } else {
-               echo '{"error":{"text":"Enter valid data"}}';
+               echo '{"error":{"text":"Error"}}';
             }
 
            
         }
         else{
-            echo '{"error":{"text":"Enter valid data"}}';
+            echo '{"error":{"text":"Data tidak valid"}}';
         }
     }
     catch(PDOException $e) {
