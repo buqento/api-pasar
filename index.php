@@ -168,10 +168,11 @@ function getPesanans($id) {
 // $sql = "SELECT * FROM summary_pesanan WHERE pengguna_id=$id";
 
 $sql = "SELECT pesanan.id, pesanan.tanggal, pesanan.pengguna_id, pesanan.produk_id, pesanan.jumlah,
-pesanan.total_bayar, pesanan.keterangan, produk.nama, produk.foto
+Format(pesanan.total_bayar, '##.##0') AS total_bayar, pesanan.keterangan, produk.nama, produk.foto
 FROM pesanan INNER JOIN produk
 ON pesanan.produk_id = produk.id 
 WHERE pesanan.status = 0 AND pesanan.pengguna_id=$id 
+AND substr(pesanan.tanggal,1,10)=substr(current_timestamp(),1,10)
 ORDER BY pesanan.tanggal DESC";
   try {
     $db = getDB();
