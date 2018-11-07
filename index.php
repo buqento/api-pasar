@@ -53,7 +53,7 @@ function addToPesanan(){
 }
 
 function getProduks() {
-$sql = "SELECT * FROM produk";
+$sql = "SELECT kode, nama, gambar, keterangan, harga FROM produk";
   try {
     $db = getDB();
     $stmt = $db->query($sql);
@@ -67,7 +67,7 @@ $sql = "SELECT * FROM produk";
 }
 
 function getPenggunas() {
-$sql = "SELECT * FROM pengguna";
+$sql = "SELECT nama_lengkap, telepon, email, alamat FROM pengguna";
   try {
     $db = getDB();
     $stmt = $db->query($sql);
@@ -81,7 +81,7 @@ $sql = "SELECT * FROM pengguna";
 }
 
 function getPengguna($id) {
-$sql = "SELECT * FROM pengguna WHERE id=$id";
+$sql = "SELECT nama_lengkap, telepon, email, alamat FROM pengguna WHERE id=$id";
   try {
     $db = getDB();
     $stmt = $db->query($sql);
@@ -166,7 +166,7 @@ function deletePesanan(){
 
 function getPesanans($id) {
 // $sql = "SELECT * FROM summary_pesanan WHERE pengguna_id=$id";
-$sql = "SELECT pesanan.id, pesanan.tanggal, pesanan.pengguna_id, pesanan.produk_id, pesanan.jumlah, Format(pesanan.total_bayar, '##.##0') AS total_bayar, pesanan.keterangan, produk.nama, produk.foto FROM pesanan INNER JOIN produk ON pesanan.produk_id = produk.kode WHERE pesanan.status = 0 AND substr(pesanan.tanggal,1,10)=substr(current_timestamp(),1,10) AND pesanan.pengguna_id=$id ORDER BY pesanan.tanggal DESC ";
+$sql = "SELECT pesanan.id, pesanan.tanggal, pesanan.pengguna_id, pesanan.produk_id, pesanan.jumlah, Format(pesanan.total_bayar, '##.##0') AS total_bayar, pesanan.keterangan, produk.nama, produk.gambar FROM pesanan INNER JOIN produk ON pesanan.produk_id = produk.kode WHERE pesanan.status = 0 AND substr(pesanan.tanggal,1,10)=substr(current_timestamp(),1,10) AND pesanan.pengguna_id=$id ORDER BY pesanan.tanggal DESC ";
   try {
     $db = getDB();
     $stmt = $db->query($sql);
