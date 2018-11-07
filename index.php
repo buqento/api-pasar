@@ -132,6 +132,7 @@ function updateProfil(){
     $alamat=$data->alamat;
 
     try {
+       
         $db = getDB();
         $sql = "UPDATE pengguna SET nama_lengkap=:nama_lengkap, telepon=:telepon, alamat=:alamat WHERE id=:id";
         $stmt = $db->prepare($sql);
@@ -141,10 +142,37 @@ function updateProfil(){
         $stmt->bindParam("id", $id, PDO::PARAM_STR);
         $stmt->execute();
         $db = null;
-        echo '{"success":{"text":"Updated"}}';
+
+        $userDetails = '';        
+        $userDetails = getUserDetails($id);
+        if($userDetails){
+            $userDetails = json_encode($userDetails);
+            echo '{"userData": ' .$userDetails . '}';
+        } else {
+            echo '{"error":{"text":"Error"}}';
+        }
+
     } catch(PDOException $e) {
         echo '{"error":{"text":'. $e->getMessage() .'}}';
     }
+}
+
+function getUserDetails($id) {
+    try {
+        $db = getDB();
+        $sql = "SELECT id, nama_lengkap, email, telepon, username, alamat FROM pengguna WHERE id=:id";
+        $stmt = $db->prepare($sql);
+        $stmt->bindParam("id", $id,PDO::PARAM_STR);
+        $stmt->execute();
+        $userDetails = $stmt->fetch(PDO::FETCH_OBJ);
+        $userDetails->token = apiToken($id);
+        $db = null;
+        return $userDetails;
+        
+    } catch(PDOException $e) {
+        echo '{"error":{"text":'. $e->getMessage() .'}}';
+    }
+    
 }
 
 function deletePesanan(){
@@ -166,31 +194,32 @@ function deletePesanan(){
 
 function getPesanans($id) {
 // $sql = "SELECT * FROM summary_pesanan WHERE pengguna_id=$id";
-$sql = "SELECT pesanan.id, pesanan.tanggal, pesanan.pengguna_id, pesanan.produk_id, pesanan.jumlah, Format(pesanan.total_bayar, '##.##0') AS total_bayar, pesanan.keterangan, produk.nama, produk.gambar FROM pesanan INNER JOIN produk ON pesanan.produk_id = produk.kode WHERE pesanan.status = 0 AND substr(pesanan.tanggal,1,10)=substr(current_timestamp(),1,10) AND pesanan.pengguna_id=$id ORDER BY pesanan.tanggal DESC ";
-  try {
-    $db = getDB();
-    $stmt = $db->query($sql);
-    $pesanans = $stmt->fetchAll(PDO::FETCH_OBJ);
-    $db = null;
-    echo json_encode($pesanans);
-  }
-  catch(PDOException $e) {
-    echo json_encode($e->getMessage());
-  }
+    $sql = "SELECT pesanan.id, pesanan.tanggal, pesanan.pengguna_id, pesanan.produk_id, pesanan.jumlah, Format(pesanan.total_bayar, '##.##0') AS total_bayar, pesanan.keterangan, produk.nama, produk.gambar FROM pesanan INNER JOIN produk ON pesanan.produk_id = produk.kode WHERE pesanan.status = 0 AND substr(pesanan.tanggal,1,10)=substr(current_timestamp(),1,10) AND pesanan.pengguna_id=$id ORDER BY pesanan.tanggal DESC ";
+
+    try {
+        $db = getDB();
+        $stmt = $db->query($sql);
+        $pesanans = $stmt->fetchAll(PDO::FETCH_OBJ);
+        $db = null;
+        echo json_encode($pesanans);
+    }
+        catch(PDOException $e) {
+        echo json_encode($e->getMessage());
+    }
 }
 
 function getTotalPesananById($id) {
-$sql = "SELECT SUM(total_bayar) AS total, COUNT(id) AS jumlah FROM pesanan WHERE pengguna_id=$id AND status=0 AND substr(tanggal,1,10)=substr(current_timestamp(),1,10)";
-  try {
-    $db = getDB();
-    $stmt = $db->query($sql);
-    $pesanans = $stmt->fetchAll(PDO::FETCH_OBJ);
-    $db = null;
-    echo json_encode($pesanans);
-  }
-  catch(PDOException $e) {
-    echo json_encode($e->getMessage());
-  }
+    $sql = "SELECT SUM(total_bayar) AS total, COUNT(id) AS jumlah FROM pesanan WHERE pengguna_id=$id AND status=0 AND substr(tanggal,1,10)=substr(current_timestamp(),1,10)";
+      try {
+        $db = getDB();
+        $stmt = $db->query($sql);
+        $pesanans = $stmt->fetchAll(PDO::FETCH_OBJ);
+        $db = null;
+        echo json_encode($pesanans);
+      }
+      catch(PDOException $e) {
+        echo json_encode($e->getMessage());
+      }
 }
 
 function login() {
@@ -208,19 +237,19 @@ function login() {
         $mainCount=$stmt->rowCount();
         $userData = $stmt->fetch(PDO::FETCH_OBJ);
         
-        if(!empty($userData))
-        {
-            $user_id=$userData->user_id;
-            $userData->token = apiToken($user_id);
-        }
+        // if(!empty($userData))
+        // {
+        //     $user_id=$userData->user_id;
+        //     $userData->token = apiToken($user_id);
+        // }
         
         $db = null;
-         if($userData){
-               $userData = json_encode($userData);
-                echo '{"userData": ' .$userData . '}';
-            } else {
-               echo '{"error":{"text":"Bad request wrong username and password"}}';
-            }
+        if($userData){
+            $userData = json_encode($userData);
+            echo '{"userData": ' .$userData . '}';
+        } else {
+            echo '{"error":{"text":"Bad request wrong username and password"}}';
+        }
 
            
     }
@@ -313,4 +342,6 @@ function internalUserDetails($input) {
     }
     
 }
+
+
 ?>
