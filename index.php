@@ -172,7 +172,6 @@ Format(pesanan.total_bayar, '##.##0') AS total_bayar, pesanan.keterangan, produk
 FROM pesanan INNER JOIN produk
 ON pesanan.produk_id = produk.id 
 WHERE pesanan.status = 0 AND pesanan.pengguna_id=$id 
-AND substr(tanggal,1,10)=substr(current_timestamp(),1,10)
 ORDER BY pesanan.tanggal DESC";
   try {
     $db = getDB();
