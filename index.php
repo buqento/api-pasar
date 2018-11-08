@@ -10,7 +10,6 @@ $app->post('/login','login');
 $app->post('/signup','signup');
 $app->post('/postPesanan','postPesanan');
 $app->post('/updateProfil','updateProfil');
-$app->post('/deletePesanan','deletePesanan');
 $app->post('/addToPesanan','addToPesanan');
 
 //GET
@@ -175,23 +174,6 @@ function getUserDetails($id) {
     
 }
 
-function deletePesanan(){
-    $request = \Slim\Slim::getInstance()->request();
-    $data = json_decode($request->getBody());
-    $id=$data->id;
-    try {
-        $db = getDB();
-        $sql = "DELETE FROM pesanan WHERE id=:id";
-        $stmt = $db->prepare($sql);
-        $stmt->bindParam("id", $id, PDO::PARAM_INT);
-        $stmt->execute();
-        $db = null;
-        echo '{"success":{"text":"Pesanan deleted"}}';
-    } catch(PDOException $e) {
-        echo '{"error":{"text":'. $e->getMessage() .'}}';
-    }   
-}
-
 function getPesanans($id) {
 // $sql = "SELECT * FROM summary_pesanan WHERE pengguna_id=$id";
     $sql = "SELECT pesanan.id, pesanan.tanggal, pesanan.pengguna_id, pesanan.produk_id, pesanan.jumlah, Format(pesanan.total_bayar, '##.##0') AS total_bayar, pesanan.keterangan, produk.nama, produk.gambar FROM pesanan INNER JOIN produk ON pesanan.produk_id = produk.kode WHERE pesanan.status = 0 AND substr(pesanan.tanggal,1,10)=substr(current_timestamp(),1,10) AND pesanan.pengguna_id=$id ORDER BY pesanan.tanggal DESC ";
@@ -328,7 +310,7 @@ function signup() {
 function internalUserDetails($input) {
     try {
         $db = getDB();
-        $sql = "SELECT id, nama_lengkap, email, telepon, username FROM pengguna WHERE username=:input or email=:input";
+        $sql = "SELECT id, nama_lengkap, email, telepon, username, alamat FROM pengguna WHERE username=:input or email=:input";
         $stmt = $db->prepare($sql);
         $stmt->bindParam("input", $input,PDO::PARAM_STR);
         $stmt->execute();
