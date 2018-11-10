@@ -190,7 +190,7 @@ function getPesanans($id) {
 }
 
 function getTotalPesananById($id) {
-    $sql = "SELECT SUM(total_bayar) AS total_bayar, COUNT(id) AS jumlah FROM pesanan WHERE pengguna_id=$id AND status=0 AND substr(tanggal,1,10)=substr(current_timestamp(),1,10)";
+    $sql = "SELECT Format(SUM(total_bayar), '##.##0') AS total_bayar, COUNT(id) AS jumlah FROM pesanan WHERE pengguna_id=$id AND status=0 AND substr(tanggal,1,10)=substr(current_timestamp(),1,10)";
       try {
         $db = getDB();
         $stmt = $db->query($sql);
