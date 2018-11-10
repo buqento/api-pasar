@@ -16,7 +16,7 @@ $app->post('/addToPesanan','addToPesanan');
 $app->get('/produks', 'getProduks');
 $app->get('/penggunas', 'getPenggunas');
 $app->get('/pengguna/:id', 'getPengguna');
-$app->get('/getPesanans/:id','getPesanans');
+$app->get('/pesanans/:id','getPesanans');
 $app->get('/getTotalPesananById/:id','getTotalPesananById');
 
 $app->run();
