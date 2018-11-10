@@ -17,7 +17,7 @@ $app->get('/produks', 'getProduks');
 $app->get('/penggunas', 'getPenggunas');
 $app->get('/pengguna/:id', 'getPengguna');
 $app->get('/pesanans/:id','getPesanans');
-$app->get('/getTotalPesananById/:id','getTotalPesananById');
+$app->get('/totpesanans/:id','getTotalPesananById');
 
 $app->run();
 
@@ -175,7 +175,6 @@ function getUserDetails($id) {
 }
 
 function getPesanans($id) {
-// $sql = "SELECT * FROM summary_pesanan WHERE pengguna_id=$id";
     $sql = "SELECT pesanan.id, pesanan.tanggal, pesanan.pengguna_id, pesanan.produk_id, pesanan.jumlah, Format(pesanan.total_bayar, '##.##0') AS total_bayar, pesanan.keterangan, produk.nama, produk.gambar FROM pesanan INNER JOIN produk ON pesanan.produk_id = produk.kode WHERE pesanan.status = 0 AND substr(pesanan.tanggal,1,10)=substr(current_timestamp(),1,10) AND pesanan.pengguna_id=$id ORDER BY pesanan.tanggal DESC ";
 
     try {
@@ -191,7 +190,7 @@ function getPesanans($id) {
 }
 
 function getTotalPesananById($id) {
-    $sql = "SELECT SUM(total_bayar) AS total, COUNT(id) AS jumlah FROM pesanan WHERE pengguna_id=$id AND status=0 AND substr(tanggal,1,10)=substr(current_timestamp(),1,10)";
+    $sql = "SELECT SUM(total_bayar) AS total_bayar, COUNT(id) AS jumlah FROM pesanan WHERE pengguna_id=$id AND status=0 AND substr(tanggal,1,10)=substr(current_timestamp(),1,10)";
       try {
         $db = getDB();
         $stmt = $db->query($sql);
