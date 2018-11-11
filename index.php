@@ -52,7 +52,7 @@ function addToPesanan(){
 }
 
 function getProduks() {
-$sql = "SELECT kode, nama, gambar, keterangan, harga FROM produk";
+$sql = "SELECT kode, nama, gambar, keterangan, harga, Format(harga, '##.##0') AS vharga FROM produk";
   try {
     $db = getDB();
     $stmt = $db->query($sql);
