@@ -5,9 +5,9 @@ session_start();
 
 /* DATABASE CONFIGURATION */
 define('DB_SERVER', 'localhost');
-define('DB_USERNAME', 'root');
+define('DB_USERNAME', 'timoerin_bvqento');
 define('DB_PASSWORD', 'Manggureb3!');
-define('DB_DATABASE', 'pasar');
+define('DB_DATABASE', 'timoerin_pasar');
 
 define("SITE_KEY", 'yourSecretKey');
 
