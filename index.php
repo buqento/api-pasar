@@ -7,6 +7,7 @@ $app = new \Slim\Slim();
 
 //POST
 $app->post('/login','login');
+$app->post('/update-produk','updateProduk');
 
 //GET
 $app->get('/produks', 'getProduks');
