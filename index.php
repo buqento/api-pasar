@@ -16,7 +16,7 @@ $app->get('/pengguna/:id', 'getPengguna');
 $app->run();
 
 function getProduks() {
-    $sql = "SELECT kode, nama, gambar, keterangan, harga, Format(harga, '##.##0') AS vharga FROM produk";
+    $sql = "SELECT id, kode, nama, gambar, keterangan, harga, Format(harga, '##.##0') AS vharga FROM produk";
     try {
         $db = getDB();
         $stmt = $db->query($sql);
@@ -26,6 +26,28 @@ function getProduks() {
     }
         catch(PDOException $e) {
         echo json_encode($e->getMessage());
+    }
+}
+
+function updateProduk(){
+    $request = \Slim\Slim::getInstance()->request();
+    $data = json_decode($request->getBody());
+
+    $id=$data->id;
+    $harga=$data->harga;
+
+    try {
+       
+        $db = getDB();
+        $sql = "UPDATE produk SET harga=:harga WHERE id=:id";
+        $stmt = $db->prepare($sql);
+        $stmt->bindParam("harga", $harga, PDO::PARAM_STR);
+        $stmt->bindParam("id", $id, PDO::PARAM_STR);
+        $stmt->execute();
+        $db = null;
+
+    } catch(PDOException $e) {
+        echo '{"error":{"text":'. $e->getMessage() .'}}';
     }
 }
 
