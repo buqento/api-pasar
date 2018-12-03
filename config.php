@@ -5,16 +5,10 @@ session_start();
 
 /* DATABASE CONFIGURATION */
 define('DB_SERVER', 'localhost');
+define('DB_USERNAME', 'root');
+define('DB_PASSWORD', 'Manggureb3!');
+define('DB_DATABASE', 'pasar');
 
-// define('DB_USERNAME', 'root');
-// define('DB_PASSWORD', '');
-// define('DB_DATABASE', 'betagor');
-
-define('DB_USERNAME', 'dpmptspk_betagores');
-define('DB_PASSWORD', 'manggureb3');
-define('DB_DATABASE', 'dpmptspk_betagores');
-
-// define("BASE_URL", "http://localhost/api/betagores/");
 define("SITE_KEY", 'yourSecretKey');
 
 

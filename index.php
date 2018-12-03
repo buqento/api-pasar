@@ -7,152 +7,53 @@ $app = new \Slim\Slim();
 
 //POST
 $app->post('/login','login');
-$app->post('/signup','signup');
-$app->post('/postPesanan','postPesanan');
-$app->post('/updateProfil','updateProfil');
-$app->post('/addToPesanan','addToPesanan');
 
 //GET
 $app->get('/produks', 'getProduks');
 $app->get('/penggunas', 'getPenggunas');
 $app->get('/pengguna/:id', 'getPengguna');
-$app->get('/pesanans/:id','getPesanans');
-$app->get('/totpesanans/:id','getTotalPesananById');
 
 $app->run();
 
-function addToPesanan(){
-    $request = \Slim\Slim::getInstance()->request();
-    $data = json_decode($request->getBody());
-
-    $penggunaId=$data->penggunaId;
-    $produkId=$data->produkId;
-    $jumlah=$data->jumlah;
-    $totalBayar=$data->totalBayar;
-    $status=$data->status;
-    $keterangan=$data->keterangan;
-
+function getProduks() {
+    $sql = "SELECT kode, nama, gambar, keterangan, harga, Format(harga, '##.##0') AS vharga FROM produk";
     try {
         $db = getDB();
-        $sql = "INSERT INTO pesanan (pengguna_id, produk_id, jumlah, total_bayar, status, keterangan) VALUES (:pengguna_id, :produk_id, :jumlah, :total_bayar, :status, :keterangan)";
-        $stmt = $db->prepare($sql);
-        $stmt->bindParam("pengguna_id", $penggunaId, PDO::PARAM_STR);
-        $stmt->bindParam("produk_id", $produkId, PDO::PARAM_STR);
-        $stmt->bindParam("jumlah", $jumlah, PDO::PARAM_STR);
-        $stmt->bindParam("total_bayar", $totalBayar, PDO::PARAM_STR);
-        $stmt->bindParam("status", $status, PDO::PARAM_STR);
-        $stmt->bindParam("keterangan", $keterangan, PDO::PARAM_STR);
-        $stmt->execute();
+        $stmt = $db->query($sql);
+        $users = $stmt->fetchAll(PDO::FETCH_OBJ);
         $db = null;
-        echo '{"success":{"text":"Berhasil"}}';
-    } catch(PDOException $e) {
-        echo '{"error":{"text":'. $e->getMessage() .'}}';
+        echo json_encode($users);
     }
-    
-}
-
-function getProduks() {
-$sql = "SELECT kode, nama, gambar, keterangan, harga, Format(harga, '##.##0') AS vharga FROM produk";
-  try {
-    $db = getDB();
-    $stmt = $db->query($sql);
-    $users = $stmt->fetchAll(PDO::FETCH_OBJ);
-    $db = null;
-    echo json_encode($users);
-  }
-  catch(PDOException $e) {
-    echo json_encode($e->getMessage());
-  }
+        catch(PDOException $e) {
+        echo json_encode($e->getMessage());
+    }
 }
 
 function getPenggunas() {
-$sql = "SELECT nama_lengkap, telepon, email, alamat FROM pengguna";
-  try {
-    $db = getDB();
-    $stmt = $db->query($sql);
-    $users = $stmt->fetchAll(PDO::FETCH_OBJ);
-    $db = null;
-    echo json_encode($users);
-  }
-  catch(PDOException $e) {
-    echo json_encode($e->getMessage());
-  }
-}
-
-function getPengguna($id) {
-$sql = "SELECT nama_lengkap, telepon, email, alamat FROM pengguna WHERE id=$id";
-  try {
-    $db = getDB();
-    $stmt = $db->query($sql);
-    $users = $stmt->fetchAll(PDO::FETCH_OBJ);
-    $db = null;
-    echo json_encode($users);
-  }
-  catch(PDOException $e) {
-    echo json_encode($e->getMessage());
-  }
-}
-
-function postPesanan(){
-    $request = \Slim\Slim::getInstance()->request();
-    $data = json_decode($request->getBody());
-
-    $pengguna_id=$data->pengguna_id;
-    $produk_id=$data->produk_id;   
-    $jumlah=$data->jumlah;     
-    $total_bayar=$data->total_bayar;
-    $keterangan=$data->keterangan;
-
+    $sql = "SELECT nama_lengkap, telepon, email, alamat FROM pengguna";
     try {
         $db = getDB();
-        $sql = "INSERT INTO pesanan (pengguna_id, produk_id, jumlah, total_bayar, keterangan) 
-        VALUES (:pengguna_id, :produk_id, :jumlah, :total_bayar, :keterangan)";
-        $stmt = $db->prepare($sql);
-        $stmt->bindParam("pengguna_id", $pengguna_id, PDO::PARAM_STR);
-        $stmt->bindParam("produk_id", $produk_id, PDO::PARAM_STR);
-        $stmt->bindParam("jumlah", $jumlah, PDO::PARAM_STR);
-        $stmt->bindParam("total_bayar", $total_bayar, PDO::PARAM_STR);
-        $stmt->bindParam("keterangan", $keterangan, PDO::PARAM_STR);
-        $stmt->execute();
+        $stmt = $db->query($sql);
+        $users = $stmt->fetchAll(PDO::FETCH_OBJ);
         $db = null;
-        echo '{"success":{"text":"Saved"}}';
-    } catch(PDOException $e) {
-        echo '{"error":{"text":'. $e->getMessage() .'}}';
+        echo json_encode($users);
+    }
+        catch(PDOException $e) {
+        echo json_encode($e->getMessage());
     }
 }
 
-function updateProfil(){
-    $request = \Slim\Slim::getInstance()->request();
-    $data = json_decode($request->getBody());
-
-    $id=$data->id;
-    $nama_lengkap=$data->namaLengkap;   
-    $telepon=$data->telepon;  
-    $alamat=$data->alamat;
-
+function getPengguna($id) {
+    $sql = "SELECT nama_lengkap, telepon, email, alamat FROM pengguna WHERE id=$id";
     try {
-       
         $db = getDB();
-        $sql = "UPDATE pengguna SET nama_lengkap=:nama_lengkap, telepon=:telepon, alamat=:alamat WHERE id=:id";
-        $stmt = $db->prepare($sql);
-        $stmt->bindParam("nama_lengkap", $nama_lengkap, PDO::PARAM_STR);
-        $stmt->bindParam("telepon", $telepon, PDO::PARAM_STR);
-        $stmt->bindParam("alamat", $alamat, PDO::PARAM_STR);
-        $stmt->bindParam("id", $id, PDO::PARAM_STR);
-        $stmt->execute();
+        $stmt = $db->query($sql);
+        $users = $stmt->fetchAll(PDO::FETCH_OBJ);
         $db = null;
-
-        $userDetails = '';        
-        $userDetails = getUserDetails($id);
-        if($userDetails){
-            $userDetails = json_encode($userDetails);
-            echo '{"userData": ' .$userDetails . '}';
-        } else {
-            echo '{"error":{"text":"Error"}}';
-        }
-
-    } catch(PDOException $e) {
-        echo '{"error":{"text":'. $e->getMessage() .'}}';
+        echo json_encode($users);
+    }
+        catch(PDOException $e) {
+        echo json_encode($e->getMessage());
     }
 }
 
@@ -174,34 +75,6 @@ function getUserDetails($id) {
     
 }
 
-function getPesanans($id) {
-    $sql = "SELECT pesanan.id, pesanan.tanggal, pesanan.pengguna_id, pesanan.produk_id, pesanan.jumlah, Format(pesanan.total_bayar, '##.##0') AS total_bayar, pesanan.keterangan, produk.nama, produk.gambar FROM pesanan INNER JOIN produk ON pesanan.produk_id = produk.kode WHERE pesanan.status = 0 AND substr(pesanan.tanggal,1,10)=substr(current_timestamp(),1,10) AND pesanan.pengguna_id=$id ORDER BY pesanan.tanggal DESC ";
-
-    try {
-        $db = getDB();
-        $stmt = $db->query($sql);
-        $pesanans = $stmt->fetchAll(PDO::FETCH_OBJ);
-        $db = null;
-        echo json_encode($pesanans);
-    }
-        catch(PDOException $e) {
-        echo json_encode($e->getMessage());
-    }
-}
-
-function getTotalPesananById($id) {
-    $sql = "SELECT Format(SUM(total_bayar), '##.##0') AS total_bayar, COUNT(id) AS jumlah FROM pesanan WHERE pengguna_id=$id AND status=0 AND substr(tanggal,1,10)=substr(current_timestamp(),1,10)";
-      try {
-        $db = getDB();
-        $stmt = $db->query($sql);
-        $pesanans = $stmt->fetchAll(PDO::FETCH_OBJ);
-        $db = null;
-        echo json_encode($pesanans);
-      }
-      catch(PDOException $e) {
-        echo json_encode($e->getMessage());
-      }
-}
 
 function login() {
     $request = \Slim\Slim::getInstance()->request();
