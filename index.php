@@ -32,7 +32,7 @@ function getProduks() {
 }
 
 function getProduksByTanggal($tanggal) {
-    $sql = "SELECT id, kode, nama, gambar, keterangan, harga, Format(harga, '##.##0') AS vharga, tanggal FROM produk WHERE tanggal='".$tanggal."'";
+    $sql = "SELECT id, kode, nama, gambar, keterangan, harga, Format(harga, '##.##0') AS vharga, tanggal, status FROM produk WHERE tanggal='".$tanggal."'";
     try {
         $db = getDB();
         $stmt = $db->query($sql);
