@@ -11,7 +11,7 @@ $app->post('/update-produk','updateProduk');
 
 //GET
 $app->get('/produks', 'getProduks');
-$app->get('/produks/:tanggal', 'getProduksByTanggal')
+$app->get('/produks/:tanggal', 'getProduksByTanggal');
 $app->get('/penggunas', 'getPenggunas');
 $app->get('/pengguna/:id', 'getPengguna');
 
