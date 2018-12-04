@@ -12,19 +12,32 @@ $app->post('/update-produk','updateProduk');
 //GET
 $app->get('/produks', 'getProduks');
 $app->get('/produks/:tanggal', 'getProduksByTanggal');
-$app->get('/penggunas', 'getPenggunas');
-$app->get('/pengguna/:id', 'getPengguna');
+$app->get('/pasars', 'getPasars');
 
 $app->run();
+
+function getPasars() {
+    $sql = "SELECT id, name FROM pasar";
+    try {
+        $db = getDB();
+        $stmt = $db->query($sql);
+        $result = $stmt->fetchAll(PDO::FETCH_OBJ);
+        $db = null;
+        echo json_encode($result);
+    }
+        catch(PDOException $e) {
+        echo json_encode($e->getMessage());
+    }
+}
 
 function getProduks() {
     $sql = "SELECT id, kode, nama, gambar, keterangan, harga, Format(harga, '##.##0') AS vharga FROM produk";
     try {
         $db = getDB();
         $stmt = $db->query($sql);
-        $users = $stmt->fetchAll(PDO::FETCH_OBJ);
+        $result = $stmt->fetchAll(PDO::FETCH_OBJ);
         $db = null;
-        echo json_encode($users);
+        echo json_encode($result);
     }
         catch(PDOException $e) {
         echo json_encode($e->getMessage());
