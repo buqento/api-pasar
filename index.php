@@ -55,7 +55,7 @@ function updateProduk(){
     try {
        
         $db = getDB();
-        $sql = "UPDATE produk SET harga=:harga WHERE id=:id";
+        $sql = "UPDATE produk SET harga=:harga, status=1 WHERE id=:id";
         $stmt = $db->prepare($sql);
         $stmt->bindParam("harga", $harga, PDO::PARAM_STR);
         $stmt->bindParam("id", $id, PDO::PARAM_STR);
