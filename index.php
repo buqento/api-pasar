@@ -11,6 +11,7 @@ $app->post('/update-produk','updateProduk');
 
 //GET
 $app->get('/produks', 'getProduks');
+$app->get('/produks/:tanggal', 'getProduksByTanggal')
 $app->get('/penggunas', 'getPenggunas');
 $app->get('/pengguna/:id', 'getPengguna');
 
@@ -24,6 +25,20 @@ function getProduks() {
         $users = $stmt->fetchAll(PDO::FETCH_OBJ);
         $db = null;
         echo json_encode($users);
+    }
+        catch(PDOException $e) {
+        echo json_encode($e->getMessage());
+    }
+}
+
+function getProduksByTanggal($tanggal) {
+    $sql = "SELECT id, kode, nama, gambar, keterangan, harga, Format(harga, '##.##0') AS vharga, tanggal FROM produk WHERE tanggal='".$tanggal."'";
+    try {
+        $db = getDB();
+        $stmt = $db->query($sql);
+        $result = $stmt->fetchAll(PDO::FETCH_OBJ);
+        $db = null;
+        echo json_encode($result);
     }
         catch(PDOException $e) {
         echo json_encode($e->getMessage());
